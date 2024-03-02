@@ -7,6 +7,9 @@ yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 
+.wwebjs_auth
+.wwebjs_cache
+
 .idea
 .ideia
 
@@ -128,3 +131,4 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+pnpm-lock.yaml

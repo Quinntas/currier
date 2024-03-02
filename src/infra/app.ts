@@ -10,6 +10,7 @@ import {jsonResponse} from "../core/responses";
 import {get} from "../core/handleRequest";
 import {v1Router} from "./routers/v1Router";
 import "@total-typescript/ts-reset";
+import {whatsappWebJs} from "../services";
 
 const corsOptions = {
     origin: '*',
@@ -53,6 +54,7 @@ get(mainRouter, "/", async function healthCheck(req: DecodedExpressRequest<null,
     return jsonResponse(res, 200, {message: "ok"});
 });
 
-app.listen(env.PORT, () => {
+app.listen(env.PORT, async () => {
     console.log("[Server] Running at http://localhost:" + env.PORT);
+    await whatsappWebJs.init();
 });
