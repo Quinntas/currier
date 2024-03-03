@@ -1,5 +1,9 @@
-export interface SendMessageDTO {
-    name: string;
-    email: string;
-    password: string;
+import {SendWhatsAppMessageDTO} from "../sendWhatsAppMessage/sendWhatsAppMessageDTO";
+
+export type SendMessageDTO = {
+    vehicle: "WHATSAPP";
+    data: SendWhatsAppMessageDTO
+} | {
+    vehicle: "EMAIL";
+    data: null
 }

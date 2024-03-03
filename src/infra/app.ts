@@ -55,6 +55,6 @@ get(mainRouter, "/", async function healthCheck(req: DecodedExpressRequest<null,
 });
 
 app.listen(env.PORT, async () => {
-    console.log("[Server] Running at http://localhost:" + env.PORT);
+    env.NODE_ENV === "development" && console.log(`Server running on port ${env.PORT}`);
     await whatsappWebJs.init();
 });

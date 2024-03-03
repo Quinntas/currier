@@ -1,17 +1,26 @@
-import {Client, LocalAuth, Message} from "whatsapp-web.js";
+import WAWebJS, {Client, LocalAuth, Message} from "whatsapp-web.js";
 import qrcode from 'qrcode-terminal';
+
+export interface SendMessageResult {
+    isError: boolean;
+    message: string;
+}
 
 export class WhatsappWebJs {
     private client: Client;
+    private readonly useQrCodeInTerminal: boolean
 
-    constructor() {
+    constructor(useQrCodeInTerminal: boolean = true) {
+        this.useQrCodeInTerminal = useQrCodeInTerminal;
+
         this.client = new Client({
             authStrategy: new LocalAuth()
         })
 
         this.client.on('qr', (qr: string) => {
-            console.log(`[WhatsAppWebJs] ${qr}`)
-            qrcode.generate(qr, {small: true});
+            console.log(`[WhatsappWebJs] QRCode: ${qr}`)
+            if (this.useQrCodeInTerminal)
+                qrcode.generate(qr, {small: true});
         });
 
         this.client.on('message', (message: Message) => {
@@ -24,30 +33,36 @@ export class WhatsappWebJs {
     }
 
     public async init() {
-        console.log('[WhatsAppWebJs] Starting client')
+        console.log('[WhatsappWebJs] Starting client')
         await this.client.initialize();
     }
 
-    public async sendMessage(phoneNumber: string, message: string, delay: number): Promise<[boolean, string]> {
-        phoneNumber = `${phoneNumber}@c.us`
-        await new Promise(resolve => setTimeout(resolve, delay));
+    public async sendMessage(phoneNumber: string, message: WAWebJS.MessageContent, options?: WAWebJS.MessageSendOptions): Promise<SendMessageResult> {
+        if (!phoneNumber)
+            return {isError: true, message: 'Phone number not provided'}
+
+        if (!message)
+            return {isError: true, message: 'Message not provided'}
+
+        const editedPhoneNumber = `${phoneNumber}@c.us`
+
         try {
-            await this.client.sendMessage(phoneNumber, message);
-            return [false, 'Message sent']
+            await this.client.sendMessage(editedPhoneNumber, message, options);
+            return {isError: false, message: 'editedPhoneNumber sent'}
         } catch (e) {
             if (e.message.includes('invalid wid'))
-                return [true, 'Invalid phone number']
+                return {isError: true, message: 'Invalid phone number'}
             else
-                return [true, 'Unknown error']
+                return {isError: true, message: 'Error sending message'}
         }
     }
 
     private async onMessageReceived(message: Message) {
-        console.log(`[WhatsAppWebJs] Message received: ${message.body}`)
+        console.log(`[WhatsappWebJs] Message received: ${message.body}`)
     }
 
     private onClientReady() {
-        console.log('[WhatsAppWebJs] Client is ready!')
+        console.log('[WhataAppWebJs] Client is ready!')
     }
 }
 

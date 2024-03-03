@@ -1,12 +1,18 @@
 import {SendMessageDTO} from "./sendMessageDTO";
-import {jsonResponse} from "../../../../core/responses";
 import {DecodedExpressRequest} from "../../../../types/decodedExpressRequest";
 import {Response} from "express";
-import {SendMessageResponseDTO} from "../../repo/currierRepo";
+import {HttpError} from "../../../../core/errors";
+import {SendWhatsAppMessageUseCase} from "../sendWhatsAppMessage/sendWhatsAppMessageUseCase";
+import {SendWhatsAppMessageDTO} from "../sendWhatsAppMessage/sendWhatsAppMessageDTO";
 
 export async function SendMessageUseCase(request: DecodedExpressRequest<SendMessageDTO, null>, response: Response) {
-    return jsonResponse<SendMessageResponseDTO>(response,
-        200,
-        {message: "ok"}
-    )
+    switch (request.body.vehicle) {
+        case "WHATSAPP":
+            return await SendWhatsAppMessageUseCase(request as DecodedExpressRequest<SendWhatsAppMessageDTO, null>, response)
+        case "EMAIL":
+            throw new HttpError(400, "Email not implemented")
+        default:
+            throw new HttpError(400, "Vehicle not implemented")
+    }
 }
+
