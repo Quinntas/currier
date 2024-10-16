@@ -21,6 +21,19 @@ export class UserService {
         })
     }
 
+    async validateToken(token: string) {
+        const key = `user:token:${token}`
+
+        const cache = await this.redis.get(key)
+
+        if (!cache)
+            throw new Error('Invalid token')
+
+        const decoded = JWT.decode<{ email: string }>(cache, env.JWT_SECRET)
+
+        return await this.usersRepo.findByEmail(decoded.email)
+    }
+
     async login(email: string, password: string) {
         const user = await this.usersRepo.findByEmail(email)
 
@@ -40,6 +53,8 @@ export class UserService {
         const token = JWT.sign({email: user.email}, env.JWT_SECRET, {
             expiresIn
         })
+
+        await this.redis.set(`user:token:${token}`, token, expiresIn)
 
         return {
             token,

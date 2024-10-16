@@ -1,6 +1,12 @@
 import {sessionTable} from "./session.table";
 import {InferInsertModel, InferSelectModel} from "drizzle-orm";
 
-export type SelectSessionModel = InferSelectModel<typeof sessionTable>
+export type SessionModelStatusEnum = "ACTIVE" | "INACTIVE" | "EXPIRED" | "DELETED"
 
-export type InsertSessionModel = InferInsertModel<typeof sessionTable>
+interface SessionModel {
+    status: SessionModelStatusEnum
+}
+
+export type InsertSessionModel = InferInsertModel<typeof sessionTable> & SessionModel
+
+export type SelectSessionModel = InferSelectModel<typeof sessionTable> & SessionModel

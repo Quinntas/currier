@@ -32,6 +32,8 @@ export namespace Cryptography {
     }
 
     export function parseEncryptedData(data: string): ParsedEncryptedData {
+        if (!data)
+            throw new Error('Argument \'data\' should not be empty')
         const splitPass = data.split('$')
         if (splitPass.length !== 4)
             throw new Error('Invalid encrypted data')

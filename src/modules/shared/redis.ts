@@ -17,13 +17,6 @@ export class Redis {
         return this.client.get(key);
     }
 
-    async cacheIt<T extends string>(key: string, expiresIn: number, fn: () => T | Promise<T>) {
-        const value = await this.get(key);
-        if (!value || value === 'null')
-            await this.set(key, await fn(), expiresIn);
-        return value!
-    }
-
     set(key: string, value: string, expiresIn: number = 3600) {
         return this.client.set(key, value, {
             EX: expiresIn,

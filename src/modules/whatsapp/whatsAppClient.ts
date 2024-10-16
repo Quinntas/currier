@@ -1,32 +1,43 @@
 import {create, Message, Whatsapp} from "@wppconnect-team/wppconnect";
+import {StatusFindCallback} from "@wppconnect-team/wppconnect/dist/api/model/initializer";
+import {StatusFind} from "@wppconnect-team/wppconnect/dist/api/model/enum";
 
 export interface WhatsAppClientConfig {
     session: string,
-    onMessage: (message: Message) => Promise<void>
+    onMessage?: (message: Message) => Promise<void>
 }
 
 export class WhatsAppClient {
     private client: Whatsapp | undefined
+    private _base64QrCodeImg: string | undefined
+    private _statusFind: StatusFind | keyof typeof StatusFind | undefined
 
     constructor(
         private readonly config: WhatsAppClientConfig,
     ) {
+        this.catchQR = this.catchQR.bind(this);
     }
 
     async connect() {
         this.client = await create({
             session: this.config.session,
-            headless: true,
+            headless: false,
             logQR: false,
             catchQR: this.catchQR,
-            statusFind: this.statusFind
+            statusFind: this.statusFindCallback,
+            autoClose: 0,
         });
 
         this.client.logger.level = 'error'
 
-        this.client.onMessage(this.config.onMessage);
+        if (this.config.onMessage)
+            this.client.onMessage(this.config.onMessage);
 
         await this.client.start();
+    }
+
+    private statusFindCallback: StatusFindCallback = (statusFind: StatusFind | keyof typeof StatusFind) => {
+        this._statusFind = statusFind
     }
 
     async disconnect() {
@@ -40,15 +51,23 @@ export class WhatsAppClient {
         return this.client.sendText(to, message)
     }
 
-    private catchQR(base64Qrimg: string, asciiQR: string, attempts: number, urlCode?: string) {
-        console.log('QR Code: ', base64Qrimg);
-        console.log('ASCII QR: ', asciiQR);
-        console.log('Attempts: ', attempts);
-        console.log('URL Code: ', urlCode);
+    private catchQR(base64QrCodeImg: string) {
+        if (!base64QrCodeImg)
+            return
+        this._base64QrCodeImg = base64QrCodeImg
     }
 
-    private statusFind(statusSession: string, session: string) {
-        console.log('Status Session: ', statusSession);
-        console.log('Session name: ', session);
+    get base64QrCodeImg() {
+        return this._base64QrCodeImg
+    }
+
+    get statusFind() {
+        return this._statusFind
+    }
+
+    isWaitingQrCode() {
+        if (!this._statusFind)
+            return false
+        return this._statusFind === "notLogged" || this._statusFind === "desconnectedMobile"
     }
 }
