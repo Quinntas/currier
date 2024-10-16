@@ -1,9 +1,10 @@
 import {defineConfig} from "drizzle-kit";
+import {env} from "./src/utils/env";
 
 export default defineConfig({
     dialect: "postgresql",
-    schema: "./src/shared/database.schema.ts",
+    schema: "./src/modules/**/*.table.ts",
     dbCredentials: {
-        url: process.env.POSTGRES_URL!,
+        url: env.DATABASE_URL,
     },
 });

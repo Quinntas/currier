@@ -9,6 +9,6 @@ export class SessionRepo {
     }
 
     create(session: InsertSessionModel) {
-        return this.db.insert(this.table).values(session);
+        return this.db.insert(this.table).values(session).returning();
     }
 }

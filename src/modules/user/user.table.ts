@@ -1,9 +1,9 @@
 import {pgTable, varchar} from 'drizzle-orm/pg-core'
 import {baseColumns} from "../shared/baseColumns";
 
-export const sessionTable = pgTable('sessions', {
+export const userTable = pgTable('users', {
     ...baseColumns,
-    token: varchar('token', {length: 191}).notNull(),
-    status: varchar('status', {length: 191}).notNull(),
     name: varchar('name', {length: 191}).notNull(),
+    email: varchar('email', {length: 191}).notNull().unique(),
+    password: varchar('password', {length: 191}).notNull(),
 })
