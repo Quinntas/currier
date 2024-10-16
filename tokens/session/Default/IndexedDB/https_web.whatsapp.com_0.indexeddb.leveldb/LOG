@@ -1,0 +1,14 @@
+2024/10/15-20:53:35.706 323c Reusing MANIFEST C:\Users\caioq\Documents\GIthub\test-wppconnect\tokens\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2024/10/15-20:53:35.707 323c Recovering log #542
+2024/10/15-20:53:35.708 323c Reusing old log C:\Users\caioq\Documents\GIthub\test-wppconnect\tokens\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000542.log 
+2024/10/15-20:53:36.734 3cb0 Manual compaction at level-0 from ' \x0d\x01\x00\x00\x00' @ 72057594037927935 : 1 .. ' \x0e\x01\x00\x00\x00' @ 0 : 0; will stop at (end)
+2024/10/15-20:53:36.735 3cb0 Level-0 table #547: started
+2024/10/15-20:53:36.738 3cb0 Level-0 table #547: 38586 bytes OK
+2024/10/15-20:53:36.739 3cb0 Delete type=0 #542
+2024/10/15-20:53:36.739 323c Manual compaction at level-0 from ' \x0e\x01\x00\x00\x00' @ 72057594037927935 : 1 .. ' \x0f\x01\x00\x00\x00' @ 0 : 0; will stop at (end)
+2024/10/15-20:53:38.068 3218 Compacting 1@1 + 1@2 files
+2024/10/15-20:53:38.087 3218 Generated table #548@1: 21408 keys, 743387 bytes
+2024/10/15-20:53:38.087 3218 Compacted 1@1 + 1@2 files => 743387 bytes
+2024/10/15-20:53:38.087 3218 compacted to: files[ 0 0 1 0 0 0 0 ]
+2024/10/15-20:53:38.088 3218 Delete type=2 #544
+2024/10/15-20:53:38.088 3218 Delete type=2 #547
