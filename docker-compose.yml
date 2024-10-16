@@ -1,0 +1,91 @@
+version: '3.7'
+
+services:
+  app:
+    container_name: app
+    hostname: app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - network
+    ports:
+      - "3000:3000"
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      rmq:
+        condition: service_started
+    environment:
+      - DATABASE_URL=postgres://root:rootpwd@db:5432/test
+      - PORT=3000
+      - PEPPER=secret
+      - JWT_SECRET=secret
+      - REDIS_URL=redis://redis:6379
+
+  rmq:
+    container_name: rmq
+    hostname: rmq
+    image: rabbitmq:latest
+    networks:
+      - network
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - TZ=America/Sao_Paulo
+
+  db:
+    container_name: db
+    hostname: db
+    image: pgvector/pgvector:pg16
+    networks:
+      - network
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=rootpwd
+      - POSTGRES_DB=test
+      - TZ=America/Sao_Paulo
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+
+  redis:
+    container_name: redis
+    hostname: redis
+    image: redis:latest
+    networks:
+      - network
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  network:
+    driver: bridge

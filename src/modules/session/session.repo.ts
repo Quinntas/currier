@@ -39,7 +39,7 @@ export class SessionRepo extends Repository<typeof sessionTable> {
             this.db.select().from(this.table).where(eq(this.table.status, "ACTIVE"))
         )
         if (!session)
-            throw new Error('Session not found')
+            throw new Error('Sessions not found')
         return session
     }
 }
